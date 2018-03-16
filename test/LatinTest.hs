@@ -15,6 +15,8 @@ import           Frames.CSV    (declareColumn, pipeTableMaybe, readFileLatin1Ln)
 import           Frames.Rec
 import           Pipes         (Producer, (>->))
 import qualified Pipes.Prelude as P
+import TH.RelativePaths (pathRelativeToCabalPackage)
+import Language.Haskell.TH.Lib (stringE)
 
 declareColumn "mId" ''Int
 declareColumn "manager" '' Text
@@ -26,7 +28,9 @@ type ManRow = Record ManColumns
 type ManMaybe = Rec Maybe ManColumns
 
 manStreamM :: MonadSafe m => Producer ManMaybe m ()
-manStreamM = readFileLatin1Ln "test/data/latinManagers.csv" >-> pipeTableMaybe
+manStreamM = readFileLatin1Ln dataFile >-> pipeTableMaybe
+  where dataFile = $(pathRelativeToCabalPackage "test/data/latinManagers.csv"
+                     >>= stringE)
 
 managers :: IO [Text]
 managers =

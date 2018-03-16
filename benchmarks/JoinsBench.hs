@@ -7,7 +7,7 @@
 import Frames
 import Frames.Joins
 import Criterion.Main
-import TH.RelativePaths
+import TH.RelativePaths (pathRelativeToCabalPackage)
 
 pathRelativeToCabalPackage "data/left1.csv" >>= tableTypes "LCols"
 pathRelativeToCabalPackage "data/right1.csv" >>= tableTypes "RCols"
