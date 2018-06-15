@@ -194,6 +194,15 @@ readFileLatin1Ln fp = Pipes.Safe.Prelude.withFile fp ReadMode $ \h ->
       latinLines = PT.decode PT.lines latinText
   in Pipes.Group.concats latinLines
 
+-- | Produce the lines of a latin1 (or ISO8859 Part 1) encoded file as
+-- ’T.Text’ values. Similar to ’PT.readFileLn’ that uses the system
+-- locale for decoding, but built on the ’PT.decodeIso8859_1’ decoder.
+readFileAscii1Ln :: P.MonadSafe m => FilePath -> P.Producer T.Text m ()
+readFileAscii1Ln fp = Pipes.Safe.Prelude.withFile fp ReadMode $ \h ->
+  let asciiText = void (PT.decodeAscii (Pipes.ByteString.fromHandle h))
+      asciiLines = PT.decode PT.lines asciiText
+  in Pipes.Group.concats asciiLines
+
 -- | Read a 'RecF' from one line of CSV.
 readRow :: ReadRec rs => ParserOptions -> T.Text -> Rec (Either T.Text) rs
 readRow = (readRec .) . tokenizeRow
